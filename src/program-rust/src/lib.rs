@@ -4,6 +4,7 @@ use solana_program::{
     entrypoint,
     entrypoint::ProgramResult,
     msg,
+    // native_token::LAMPORTS_PER_SOL,
     program_error::ProgramError,
     pubkey::Pubkey,
 };
@@ -25,6 +26,14 @@ pub fn process_instruction(
     instruction_data: &[u8], // The message from the greeter
 ) -> ProgramResult {
     msg!("Hello World Rust program entrypoint");
+
+    msg!("account info: '{:?}'", accounts);
+
+    msg!("total value: '{:?}'",accounts[0].lamports.borrow());
+
+    // if accounts[0].lamports.borrow() > 17000918720 {
+    //     msg!("We have enough!");
+    // }
 
     // Iterating accounts is safer than indexing
     let accounts_iter = &mut accounts.iter();

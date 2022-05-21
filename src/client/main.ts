@@ -7,6 +7,7 @@ import {
   establishPayer,
   checkProgram,
   sayHello,
+  sayHelloAndSendSol,
   reportGreetings,
 } from './hello_world';
 
@@ -22,8 +23,10 @@ async function main() {
   // Check if the program has been deployed
   await checkProgram();
 
-  // Say hello to an account
-  await sayHello();
+  // // Say hello to an account
+  // await sayHello();
+
+  await sayHelloAndSendSol();
 
   // Find out how many times that account has been greeted
   await reportGreetings();

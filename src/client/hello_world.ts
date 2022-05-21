@@ -160,6 +160,10 @@ export async function checkProgram(): Promise<void> {
   }
   console.log(`Using program ${programId.toBase58()}`);
 
+  console.log(`Program Info: `,programInfo);
+
+  // console.log(`Prgogram Data: `,programInfo.data.toString('utf8') )
+
   // Derive the address (public key) of a greeting account from the program so that it's easy to find later.
   const GREETING_SEED = 'hello';
   greetedPubkey = await PublicKey.createWithSeed(
@@ -210,6 +214,39 @@ export async function sayHello(): Promise<void> {
     new Transaction().add(instruction),
     [payer],
   );
+}
+
+export async function sayHelloAndSendSol(): Promise<void> {
+  console.log('Saying hello and sending to', greetedPubkey.toBase58());
+
+  const transaction = new Transaction();
+
+  const instructionHello = new TransactionInstruction({
+    keys: [{pubkey: greetedPubkey, isSigner: false, isWritable: true}],
+    programId,
+    data: Buffer.from('hello', 'utf8'), // say 'hello'
+  });
+
+  transaction.add(instructionHello);
+
+  const instructionTransfer = SystemProgram.transfer({
+    fromPubkey: payer.publicKey,
+    toPubkey: greetedPubkey,
+    lamports: LAMPORTS_PER_SOL,
+  })
+
+  transaction.add(instructionTransfer);
+
+  const greetedInfo = await connection.getAccountInfo(greetedPubkey);
+  console.log(`Greeted Info Before: `,greetedInfo);
+  await sendAndConfirmTransaction(
+    connection,
+    transaction,
+    [payer],
+  );
+
+  const greetedInfoAfter = await connection.getAccountInfo(greetedPubkey);
+  console.log(`Greeted Info After: `,greetedInfoAfter);
 }
 
 /**
